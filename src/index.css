@@ -69,18 +69,33 @@
   }
 }
 
+@layer components {
+  .section-heading {
+    background: rgb(0, 170, 255);
+    background: radial-gradient(
+      circle,
+      rgba(0, 170, 255, 1) 0%,
+      rgb(54, 93, 138) 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    @apply text-2xl md:text-5xl text-primary text-center font-bold;
+  }
+}
+
 .text-gradient {
   background: #00aaff;
   background: linear-gradient(120deg, rgb(30, 55, 94) 0%, #42a5f5 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+
 .text-color {
   color: #565f63;
 }
 
 .banner-bg {
-  background-image: url('./assets/bg.jpg');
+  background-image: url("./assets/bg.jpg");
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
