@@ -4,10 +4,10 @@ import ai from '@/assets/animation/ai.json'
 const Banner = () => {
   return (
     <>
-      <div className="banner-bg h-screen md:h-[80vh] flex items-center justify-center px-10">
+      <div className="banner-bg h-screen md:h-[500px] flex items-center justify-center px-10">
         {/* text section */}
        <div className="space-y-5 flex-1">
-       <h1 className="text-primary text-5xl font-semibold w-full">
+       <h1 className="section-heading text-left">
        Your AI Health Partner: <br /> Empowering Wellness
         </h1>
         <p className="text-color">
