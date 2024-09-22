@@ -3,16 +3,16 @@ import { useState } from "react";
 import Lottie from "lottie-react";
 import Login from "@/components/auth/Login";
 import SignUp from "@/components/auth/SignUp";
-// import login from "@/assets/login.json";
+import auth from "@/assets/animation/auth.json";
 
 const Auth = () => {
   const [activeTab, setActiveTab] = useState("login");
   return (
     <>
       <div className="flex flex-col md:flex-row items-center justify-around">
-        {/* <div>
-          <Lottie animationData={login} loop={true} className="w-[400px]" />
-        </div> */}
+        <div>
+          <Lottie animationData={auth} loop={true} className="w-[400px]" />
+        </div>
         <Tabs
           value={activeTab}
           onValueChange={setActiveTab}

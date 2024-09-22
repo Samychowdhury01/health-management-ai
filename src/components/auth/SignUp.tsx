@@ -11,11 +11,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { FieldErrors, FieldValues, useForm } from "react-hook-form";
-import { useSignUpMutation } from "@/redux/api/auth/authApi";
+
 import Spinner from "../ui/Spinner";
 import Swal from "sweetalert2";
 import { getErrorData } from "@/utils/getErrorData";
-const SignUp = ({ setActiveTab }) => {
+import { useSignUpMutation } from "@/redux/api/auth/authApi";
+const SignUp = ({ setActiveTab } : {setActiveTab: any} ) => {
   const {
     register,
     handleSubmit,
@@ -46,7 +47,7 @@ const SignUp = ({ setActiveTab }) => {
       Swal.fire({
         icon: "error",
         title: "Oops...",
-        text: errorData?.message || "Signup failed. Please try again.",
+        text: errorData?.message || "Sign up failed. Please try again.",
       });
       reset(); // Reset form fields
     }
@@ -113,30 +114,8 @@ const SignUp = ({ setActiveTab }) => {
               </p>
             )}
           </div>
-          <div className="space-y-1">
-            <Label htmlFor="phone">Phone No.</Label>
-            <Input
-              placeholder="Your Phone No."
-              id="phone"
-              type="number"
-              {...register("phone", { required: true })}
-            />
-            {typedErrors.phone && (
-              <p className="text-red-500 text-sm">Phone number is required</p>
-            )}
-          </div>
-          <div className="space-y-1">
-            <Label htmlFor="address">Address</Label>
-            <Input
-              placeholder="Your Address"
-              id="address"
-              type="text"
-              {...register("address", { required: true, maxLength: 11 })}
-            />
-            {typedErrors.address && (
-              <p className="text-red-500 text-sm">Address is Required</p>
-            )}
-          </div>
+        
+       
           <p className="text-red-500 text-sm">{}</p>
         </CardContent>
         <CardFooter>

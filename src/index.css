@@ -100,3 +100,8 @@
   background-repeat: no-repeat;
   background-size: cover;
 }
+
+.progress-bar{
+  background: #00aaff;
+  background: linear-gradient(120deg, rgb(30, 55, 94) 0%, #42a5f5 100%);
+}

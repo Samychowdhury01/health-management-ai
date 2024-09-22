@@ -18,7 +18,7 @@ const NavMenu = () => {
         <ActiveLink to="/about">Chat</ActiveLink>
       </li>
       <li>
-        <ActiveLink to="/dashboard">Dashboard</ActiveLink>
+        <ActiveLink to="/dashboard/profile">Dashboard</ActiveLink>
       </li>
       <li>
         <Button variant="outline">
