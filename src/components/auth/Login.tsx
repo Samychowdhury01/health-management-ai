@@ -18,7 +18,7 @@ import { useLoginMutation } from "@/redux/api/auth/authApi";
 import Spinner from "../ui/Spinner";
 import { useState } from "react";
 import { useCookies } from "react-cookie";
-import {  useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { getErrorData } from "@/utils/getErrorData";
 
 const Login = () => {
@@ -26,7 +26,6 @@ const Login = () => {
   const navigate = useNavigate();
   // redux
   const [login, { isLoading }] = useLoginMutation();
-
 
   // react-form-hook
   const {
@@ -46,14 +45,14 @@ const Login = () => {
   // onSubmit handler
   const onSubmit = async (data: any) => {
     setErrorMessage(""); // Clear any previous error messages
-  
+
     try {
       const response = await login(data);
-  
+
       if (response.data && response.data.token) {
         // Store the token directly from the response
         const token = response.data.token;
-  
+
         // Set the cookie with the token
         setCookie("token", token);
         Swal.fire({
@@ -61,13 +60,15 @@ const Login = () => {
           title: "Success",
           text: response.data.message || "Login successful!",
         });
-  
-        // navigate("/dashboard"); // Redirect to dashboard
+
+        navigate("/"); // Redirect to dashboard
         setErrorMessage(""); // Clear any error messages
       } else {
         // Use getErrorData to extract detailed error information
         const errorData = getErrorData(response.error);
-        setErrorMessage(errorData?.message || "Login failed. Please check your credentials.");
+        setErrorMessage(
+          errorData?.message || "Login failed. Please check your credentials."
+        );
         reset(); // Reset form fields
       }
     } catch (error) {
@@ -109,12 +110,6 @@ const Login = () => {
                 maxLength: 16,
               })}
             />
-            {typedErrors.password && (
-              <p className="text-red-500 text-sm">
-                Password must be at least 8 characters and not more than 16
-                characters
-              </p>
-            )}
           </div>
           <p className="text-red-500 text-sm">{errorMessage}</p>
         </CardContent>

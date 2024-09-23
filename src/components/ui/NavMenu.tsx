@@ -3,11 +3,25 @@
 import ActiveLink from "./ActiveLink";
 import { Button } from "./button";
 import { HiMenuAlt1, HiX } from "react-icons/hi";
-import { NavLink,  } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import useDecodedToken from "@/hook/useDecodedToken";
+import { useCookies } from "react-cookie";
 
 const NavMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const user = useDecodedToken();
+  const [cookie, setCookie, removeCookie] = useCookies();
+  const navigate = useNavigate();
+console.log(cookie);
+  // handle user logout
+  const handleLogout = async () => {
+    // @ts-ignore
+   const removedCookie = await removeCookie("token", {
+      path: "/",
+    });
+    navigate("/");
+  };
 
   const items = (
     <>
@@ -21,11 +35,15 @@ const NavMenu = () => {
         <ActiveLink to="/dashboard/profile">Dashboard</ActiveLink>
       </li>
       <li>
-        <Button variant="outline">
-          <NavLink to="/auth">Login</NavLink>
-        </Button>
-
-        {/* <Button variant="outline">Logout</Button> */}
+        {Object.entries(user).length ? (
+          <Button onClick={handleLogout} variant="outline">
+            <NavLink to="/auth">Logout</NavLink>
+          </Button>
+        ) : (
+          <Button variant="outline">
+            <NavLink to="/auth">Login</NavLink>
+          </Button>
+        )}
       </li>
     </>
   );
