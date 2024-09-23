@@ -33,7 +33,6 @@ const AddMedicine = () => {
   ];
   // days array
   const [days, setDays] = useState<string[]>([]);
-
   // handle form submission
   const onSubmit = async (data: any) => {
     console.log(days);
@@ -114,7 +113,7 @@ const AddMedicine = () => {
           <div className="space-y-1">
             <Label htmlFor="name">Name</Label>
             <Input
-              placeholder="Your Name"
+              placeholder="Medicine Name"
               id="name"
               type="text"
               className="placeholder:text-gray-400"

@@ -29,10 +29,9 @@ const SignUp = ({ setActiveTab } : {setActiveTab: any} ) => {
 
 
  const onSubmit = async (data: any) => {
-  const userInfo = { ...data, role: "user" };
-
+console.log(data);
   try {
-    const response = await signup(userInfo);
+    const response = await signup(data);
 
     if (response.data) {
       Swal.fire({

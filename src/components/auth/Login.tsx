@@ -18,7 +18,6 @@ import { useLoginMutation } from "@/redux/api/auth/authApi";
 import Spinner from "../ui/Spinner";
 import { useState } from "react";
 import { useCookies } from "react-cookie";
-import { jwtDecode } from "jwt-decode";
 import {  useNavigate } from "react-router-dom";
 import { getErrorData } from "@/utils/getErrorData";
 
@@ -57,18 +56,13 @@ const Login = () => {
   
         // Set the cookie with the token
         setCookie("token", token);
-  
-        // Decode the token
-        // @ts-ignore
-        const decoded = jwtDecode<any>(token); // Ensure proper type for the decoded token if needed
-  
         Swal.fire({
           icon: "success",
           title: "Success",
           text: response.data.message || "Login successful!",
         });
   
-        navigate("/dashboard"); // Redirect to dashboard
+        // navigate("/dashboard"); // Redirect to dashboard
         setErrorMessage(""); // Clear any error messages
       } else {
         // Use getErrorData to extract detailed error information
