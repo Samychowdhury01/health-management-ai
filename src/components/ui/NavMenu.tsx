@@ -29,7 +29,7 @@ console.log(cookie);
         <ActiveLink to="/">Home</ActiveLink>
       </li>
       <li>
-        <ActiveLink to="/about">Chat</ActiveLink>
+        <ActiveLink to="/chat">Chat</ActiveLink>
       </li>
       <li>
         <ActiveLink to="/dashboard/profile">Dashboard</ActiveLink>
