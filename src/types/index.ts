@@ -4,3 +4,9 @@ import { JwtPayload } from "jwt-decode"; // If you're using `jsonwebtoken`
 export interface ICustomJwtPayload extends JwtPayload {
   role: string; 
 }
+
+export type TConversation = {
+  userQuery: string;
+  reply: string;
+  loading: boolean
+}

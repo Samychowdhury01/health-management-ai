@@ -13,11 +13,11 @@ const NavMenu = () => {
   const user = useDecodedToken();
   const [cookie, setCookie, removeCookie] = useCookies();
   const navigate = useNavigate();
-console.log(cookie);
+
   // handle user logout
   const handleLogout = async () => {
     // @ts-ignore
-   const removedCookie = await removeCookie("token", {
+    const removedCookie = await removeCookie("token", {
       path: "/",
     });
     navigate("/");
