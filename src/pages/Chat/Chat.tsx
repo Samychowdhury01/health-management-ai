@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import ChatSideBar from "@/components/chat/ChatSideBar";
 import Message from "@/components/chat/Message";
 import { Button } from "@/components/ui/button";
@@ -8,6 +11,13 @@ import { useParams } from "react-router-dom";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { getHealthKeywords } from "@/utils/getHealthKeywords";
 import { TConversation } from "@/types";
+import useDecodedToken from "@/hook/useDecodedToken";
+import {
+  useCreateConversationMutation,
+  useStoreMessageInConversationMutation,
+  useStoreMessageMutation,
+} from "@/redux/api/message/messageApi";
+import Swal from "sweetalert2";
 
 const Chat = () => {
   // Google Generative AI setup
@@ -18,11 +28,19 @@ const Chat = () => {
     model: "gemini-pro",
   });
 
+  // userInfo
+  const user: any = useDecodedToken();
+  // conversation creation process
+  const [createConversation] = useCreateConversationMutation();
+  const [storeMessage] = useStoreMessageMutation();
+  const [storeMessageInConversation] = useStoreMessageInConversationMutation();
   // to show the messages of a specific conversation
   const { id } = useParams();
-  
+
   const [query, setQuery] = useState<string>("");
   const [conversation, setConversation] = useState<TConversation[]>([]);
+  const [conversationId, setConversationId] = useState<string>(id || "");
+  // get keywords to filer query
   const healthKeywords = getHealthKeywords();
 
   // Handle send button
@@ -57,8 +75,94 @@ const Chat = () => {
     } else {
       const result = await model.generateContent(query);
       const response = await result.response;
-      const text = response.text();
+      const text = await response.text();
 
+      // creating a new conversation if there's no previous conversation
+      if (text && user?.userId && !conversationId) {
+        try {
+          const response = await createConversation(user?.userId);
+          if (response.data) {
+            setConversationId(response.data.data?._id);
+            console.log(conversationId);
+            const payload = {
+              userId: user?.userId,
+              conversationId: response.data.data._id,
+              query,
+              answer: text,
+            };
+            const storeMessageResponse = await storeMessage(payload);
+            if (storeMessageResponse?.data) {
+              const payload = {
+                id: response.data.data._id,
+                messageId: storeMessageResponse.data.data._id,
+              };
+              console.log(payload);
+              const updateConversationResponse =
+                await storeMessageInConversation(payload);
+              console.log(updateConversationResponse);
+            }
+
+            if (storeMessageResponse.error) {
+              Swal.fire({
+                title: "Error",
+                text:
+                  // @ts-ignore
+                  response.error?.data.message ||
+                  "Error sending query to database",
+                icon: "error",
+              });
+              console.log(storeMessageResponse.error);
+            }
+          } else {
+            Swal.fire({
+              title: "Error",
+              text:
+                // @ts-ignore
+                response.error?.data.message ||
+                "Error sending query to database",
+              icon: "error",
+            });
+          }
+        } catch (error: any) {
+          Swal.fire({
+            title: "Error",
+            text: "Error sending query to database",
+            icon: "error",
+          });
+        }
+      }
+      // if there's a previous conversation
+      if (text && conversationId && user?.userId) {
+        const messagePayload = {
+          userId: user?.userId,
+          conversationId,
+          query,
+          answer: text,
+        };
+        const storeMessageResponse = await storeMessage(messagePayload);
+        if (storeMessageResponse?.data) {
+          const payload = {
+            id: conversationId,
+            messageId: storeMessageResponse.data.data._id,
+          };
+
+          const updateConversationResponse = await storeMessageInConversation(
+            payload
+          );
+          console.log(updateConversationResponse, conversationId);
+        }
+
+        if (storeMessageResponse.error) {
+          Swal.fire({
+            title: "Error",
+            text:
+              // @ts-ignore
+              response.error?.data.message || "Error sending query to database",
+            icon: "error",
+          });
+          console.log(storeMessageResponse.error);
+        }
+      }
       // Update the conversation with the AI response
       setConversation((prev) =>
         prev.map((msg, index) =>
@@ -68,7 +172,6 @@ const Chat = () => {
         )
       );
     }
-
     setQuery(""); // Clear the input field after sending
   };
 

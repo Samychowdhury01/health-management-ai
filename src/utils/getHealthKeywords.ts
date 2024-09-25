@@ -96,6 +96,7 @@ export const getHealthKeywords = () => {
     "acute",
     "fatigue",
     "pain",
+    "fit"
   ];
   return keywords;
 };
