@@ -5,21 +5,24 @@ import ChatSideBar from "@/components/chat/ChatSideBar";
 import Message from "@/components/chat/Message";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaLocationArrow } from "react-icons/fa";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { getHealthKeywords } from "@/utils/getHealthKeywords";
 import { TConversation } from "@/types";
 import useDecodedToken from "@/hook/useDecodedToken";
 import {
   useCreateConversationMutation,
+  useGetSingleConversationQuery,
   useStoreMessageInConversationMutation,
   useStoreMessageMutation,
+  useGetUserConversationQuery,
 } from "@/redux/api/message/messageApi";
 import Swal from "sweetalert2";
 
 const Chat = () => {
+  const navigate = useNavigate();
   // Google Generative AI setup
   const genAI = new GoogleGenerativeAI(
     import.meta.env.VITE_API_GENERATIVE_LANGUAGE_CLIENT as string
@@ -27,21 +30,30 @@ const Chat = () => {
   const model = genAI.getGenerativeModel({
     model: "gemini-pro",
   });
-
+  // to show the messages of a specific conversation
+  const { id } = useParams();
   // userInfo
   const user: any = useDecodedToken();
   // conversation creation process
   const [createConversation] = useCreateConversationMutation();
   const [storeMessage] = useStoreMessageMutation();
   const [storeMessageInConversation] = useStoreMessageInConversationMutation();
-  // to show the messages of a specific conversation
-  const { id } = useParams();
+  const { data, isLoading, refetch } = useGetSingleConversationQuery(id);
+  const { refetch: refetchConversations } = useGetUserConversationQuery(
+    user?.userId
+  );
 
   const [query, setQuery] = useState<string>("");
   const [conversation, setConversation] = useState<TConversation[]>([]);
   const [conversationId, setConversationId] = useState<string>(id || "");
-  // get keywords to filer query
+
+  // Get keywords to filter query
   const healthKeywords = getHealthKeywords();
+
+  // Reset conversation when changing between different conversation ids
+  useEffect(() => {
+    setConversationId(id || "");
+  }, [id]);
 
   // Handle send button
   const handleSend = async () => {
@@ -76,14 +88,18 @@ const Chat = () => {
       const result = await model.generateContent(query);
       const response = await result.response;
       const text = await response.text();
-
-      // creating a new conversation if there's no previous conversation
+      // Creating a new conversation if there's no previous conversation
       if (text && user?.userId && !conversationId) {
         try {
-          const response = await createConversation(user?.userId);
+          const conversationPayload = {
+            userId: user.userId,
+            title: query,
+          };
+          const response = await createConversation(conversationPayload);
           if (response.data) {
             setConversationId(response.data.data?._id);
-            console.log(conversationId);
+            await refetchConversations(); // Refetch conversations for sidebar
+
             const payload = {
               userId: user?.userId,
               conversationId: response.data.data._id,
@@ -96,28 +112,24 @@ const Chat = () => {
                 id: response.data.data._id,
                 messageId: storeMessageResponse.data.data._id,
               };
-              console.log(payload);
-              const updateConversationResponse =
-                await storeMessageInConversation(payload);
-              console.log(updateConversationResponse);
+              await storeMessageInConversation(payload);
             }
 
             if (storeMessageResponse.error) {
               Swal.fire({
                 title: "Error",
                 text:
-                  // @ts-ignore
+                // @ts-ignore
                   response.error?.data.message ||
                   "Error sending query to database",
                 icon: "error",
               });
-              console.log(storeMessageResponse.error);
             }
           } else {
             Swal.fire({
               title: "Error",
               text:
-                // @ts-ignore
+              // @ts-ignore
                 response.error?.data.message ||
                 "Error sending query to database",
               icon: "error",
@@ -131,7 +143,7 @@ const Chat = () => {
           });
         }
       }
-      // if there's a previous conversation
+      // If there's a previous conversation
       if (text && conversationId && user?.userId) {
         const messagePayload = {
           userId: user?.userId,
@@ -146,21 +158,17 @@ const Chat = () => {
             messageId: storeMessageResponse.data.data._id,
           };
 
-          const updateConversationResponse = await storeMessageInConversation(
-            payload
-          );
-          console.log(updateConversationResponse, conversationId);
+          await storeMessageInConversation(payload);
         }
 
         if (storeMessageResponse.error) {
           Swal.fire({
             title: "Error",
             text:
-              // @ts-ignore
+            // @ts-ignore
               response.error?.data.message || "Error sending query to database",
             icon: "error",
           });
-          console.log(storeMessageResponse.error);
         }
       }
       // Update the conversation with the AI response
@@ -175,11 +183,21 @@ const Chat = () => {
     setQuery(""); // Clear the input field after sending
   };
 
+  // Handle new conversation creation
+  const handleNewConversation = () => {
+    setConversation([]);
+    setConversationId("");
+    navigate("/chat");
+  };
+
   return (
     <div className="flex gap-3">
       {/* Side bar */}
       <div className="w-1/4 bg-blue-100 p-4">
-        <ChatSideBar />
+        <ChatSideBar
+          handleNewConversation={handleNewConversation}
+          activeConversationId={conversationId}
+        />
       </div>
       {/* Conversation part */}
       <div className="flex flex-col space-y-5 w-full">
@@ -192,6 +210,16 @@ const Chat = () => {
             loading={conv.loading}
           />
         ))}
+        {id &&
+          !isLoading &&
+          data?.data?.messages.map((message: any) => (
+            <Message
+              key={message?._id}
+              userQuery={message?.query}
+              reply={message?.answer}
+              loading={false}
+            />
+          ))}
 
         {/* Input and button for chat */}
         <div className="p-4 w-full">

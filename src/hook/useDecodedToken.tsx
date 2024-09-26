@@ -4,6 +4,7 @@ import { ICustomJwtPayload } from "@/types";
 
 const useDecodedToken = () => {
   const [{ token }] = useCookies(["token"]);
+
   if (token) {
     const decodedToken = jwtDecode<ICustomJwtPayload>(token as string);
 

@@ -11,22 +11,33 @@ const messageApi = baseApi.injectEndpoints({
         };
       },
     }),
-    createConversation: builder.mutation({
+    getUserConversation: builder.query({
       query: (userId) => {
-        console.log("console", { userId });
-        console.log(userId, "from query", "line 17");
+        return {
+          url: `/conversations/${userId}`,
+          method: "GET",
+        };
+      },
+    }),
+    getSingleConversation: builder.query({
+      query: (id) => {
+        return {
+          url: `/conversations/c/${id}`,
+          method: "GET",
+        };
+      },
+    }),
+    createConversation: builder.mutation({
+      query: (payload) => {
         return {
           url: "/conversations",
           method: "POST",
-          body: {
-            userId,
-          },
+          body: payload,
         };
       },
     }),
     storeMessageInConversation: builder.mutation({
       query: (payload) => {
-        
         return {
           url: `/conversations/${payload?.id}`,
           method: "PUT",
@@ -43,4 +54,6 @@ export const {
   useStoreMessageInConversationMutation,
   useStoreMessageMutation,
   useCreateConversationMutation,
+  useGetUserConversationQuery,
+  useGetSingleConversationQuery
 } = messageApi;
