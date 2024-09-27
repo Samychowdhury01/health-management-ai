@@ -38,7 +38,7 @@ const Chat = () => {
   const [createConversation] = useCreateConversationMutation();
   const [storeMessage] = useStoreMessageMutation();
   const [storeMessageInConversation] = useStoreMessageInConversationMutation();
-  const { data, isLoading, refetch } = useGetSingleConversationQuery(id);
+  const { data, isLoading } = useGetSingleConversationQuery(id);
   const { refetch: refetchConversations } = useGetUserConversationQuery(
     user?.userId
   );

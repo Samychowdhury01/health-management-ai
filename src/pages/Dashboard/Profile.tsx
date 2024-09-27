@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,27 +12,42 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  useGetUserProfileQuery,
+  useUpdateUserProfileMutation,
+} from "@/redux/api/user/userApi";
 import { getErrorData } from "@/utils/getErrorData";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import Swal from "sweetalert2";
 
 const Profile = () => {
+  // get profile info from db
+  const { data, isLoading } = useGetUserProfileQuery("");
+  const [updateProfile] = useUpdateUserProfileMutation();
+
   // react-form-hook
   const { register, handleSubmit } = useForm();
   const [toggle, setToggle] = useState(true);
-  const [gender, setGender] = useState("");
-  //   const { data } = useGetProfileQuery("");
-  const data = {
-    data: "",
-  };
-  //   const { name, phone, address, email } = data?.data;
-  //   const [updateProfile] = useUpdateProfileMutation();
+  const [gender, setGender] = useState(data?.data.gender || "");
+  const [isPregnant, setIsPregnant] = useState(data?.data.isPregnant || "");
+  const [isDiabetes, setIsDiabetes] = useState(data?.data.isDiabetes || "");
+  const [profileStatus, setProfileStatus] = useState<number>(
+    data?.data.profileCompleteStatus
+  );
 
   const onSubmit = async (data: any) => {
+    const updatedProfileInfo = {
+      gender,
+
+      isDiabetes: isDiabetes.toLowerCase() === "yes",
+      isPregnant: isPregnant.toLowerCase() === "yes",
+      ...data,
+    };
+
     try {
       //   const response = await updateProfile(data);
-      const response = await {};
+      const response = await updateProfile(updatedProfileInfo);
 
       if (response.data) {
         Swal.fire({
@@ -39,7 +55,9 @@ const Profile = () => {
           text: "Profile updated successfully",
           icon: "success",
         });
-        setToggle((prevToggle) => !prevToggle); // Toggle state
+        setToggle(!toggle); // Toggle state
+        console.log(response?.data?.data?.profileCompleteStatus);
+        setProfileStatus(response?.data?.data?.profileCompleteStatus);
       } else {
         const errorData = getErrorData(response.error);
         Swal.fire({
@@ -67,15 +85,15 @@ const Profile = () => {
     <div>
       {/* profile completion */}
       <div className="mb-5">
-        <p className="text-sm font-semibold text-end">100%</p>
-        <Progress value={100} className="w-full" />
+        <p className="text-sm font-semibold text-end">{profileStatus}%</p>
+        <Progress value={profileStatus} className="w-full bg-blue-100" />
       </div>
       {/* profile details */}
       <h1 className="text-center font-semibold text-3xl border-b-2 text-gradient mb-5">
         Profile
       </h1>
-      {data && (
-        <form onSubmit={handleSubmit(onSubmit)}>
+      {!isLoading && data && (
+        <>
           <div className="grid grid-cols-2 gap-2">
             {/* name */}
             <div className="space-y-1">
@@ -127,21 +145,47 @@ const Profile = () => {
             </div>
             {/* blood */}
             <div className="space-y-1">
-              <Label htmlFor="blood">Blood Group</Label>
+              <Label htmlFor="blood">
+                Blood Group
+                <span className="text-gray-600 text-sm">
+                  (try to write in this pattern: A+, A-, B+, B-, AB+, AB-, O+,
+                  O-)
+                </span>
+              </Label>
               <Input
-                defaultValue={data?.data.blood}
+                defaultValue={data?.data.bloodGroup}
                 readOnly={toggle}
                 placeholder="Your Blood Group"
                 id="blood"
                 type="text"
-                {...register("blood", { required: true })}
+                {...register("bloodGroup", { required: true })}
               />
+            </div>
+            {/* diabetic */}
+            <div className="space-y-1">
+              <Label htmlFor="isDiabetes">Diabetes</Label>
+
+              <Select onValueChange={(value) => setIsDiabetes(value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Diabetes Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Diabetes</SelectLabel>
+                    <SelectItem value="yes">Yes</SelectItem>
+                    <SelectItem value="no">No</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
             </div>
             {/* gender */}
 
             <div className="space-y-1">
               <Label htmlFor="age">Gender</Label>
-              <Select onValueChange={(value) => setGender(value)}>
+              <Select
+                defaultValue={data?.data.gender}
+                onValueChange={(value) => setGender(value)}
+              >
                 <SelectTrigger className="">
                   <SelectValue placeholder="Select your gender" />
                 </SelectTrigger>
@@ -155,17 +199,17 @@ const Profile = () => {
               </Select>
             </div>
 
-            {/* pregnancy status  if gender female*/}
+            {/* Pregnancy status (only show if gender is female) */}
             {gender === "female" && (
               <div className="space-y-1">
-                <Label htmlFor="pregnancy">pregnancy</Label>
-                <Select {...register("pregnancy", { required: true })}>
+                <Label htmlFor="isPregnant">Pregnancy</Label>
+                <Select onValueChange={(value) => setIsPregnant(value)}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select pregnancy status" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
-                      <SelectLabel>pregnancy</SelectLabel>
+                      <SelectLabel>Pregnancy</SelectLabel>
                       <SelectItem value="yes">Yes</SelectItem>
                       <SelectItem value="no">No</SelectItem>
                     </SelectGroup>
@@ -191,7 +235,9 @@ const Profile = () => {
             {toggle ? (
               <Button onClick={() => setToggle(!toggle)}>Edit</Button>
             ) : (
-              <Button>Update</Button>
+              <Button onClick={handleSubmit(onSubmit)} type="submit">
+                Update
+              </Button>
             )}
             {!toggle && (
               <Button variant="outline" onClick={() => setToggle(true)}>
@@ -199,7 +245,7 @@ const Profile = () => {
               </Button>
             )}
           </div>
-        </form>
+        </>
       )}
     </div>
   );

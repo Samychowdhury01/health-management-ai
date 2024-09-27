@@ -32,7 +32,7 @@ const ChatSideBar = ({
                 to={`/chat/${conversation._id}`}
                 className={`p-3 block rounded-lg ${
                   conversation._id === activeConversationId
-                    ? "bg-blue-500 text-white" // Highlight active conversation
+                    ? "bg-primary text-white shadow-lg" // Highlight active conversation
                     : "bg-gray-100 text-black"
                 }`}
               >
