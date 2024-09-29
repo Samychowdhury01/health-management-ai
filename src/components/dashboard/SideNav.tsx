@@ -14,7 +14,7 @@ const SideNav = () => {
         </SideActiveLink>
       </li>
       <li>
-        <SideActiveLink to="/dashboard/activities">Activities</SideActiveLink>
+        <SideActiveLink to="/dashboard/medicines">Medicines</SideActiveLink>
       </li>
     </>
   );

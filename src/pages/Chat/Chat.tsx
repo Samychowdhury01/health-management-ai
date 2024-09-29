@@ -119,7 +119,7 @@ const Chat = () => {
               Swal.fire({
                 title: "Error",
                 text:
-                // @ts-ignore
+                  // @ts-ignore
                   response.error?.data.message ||
                   "Error sending query to database",
                 icon: "error",
@@ -129,7 +129,7 @@ const Chat = () => {
             Swal.fire({
               title: "Error",
               text:
-              // @ts-ignore
+                // @ts-ignore
                 response.error?.data.message ||
                 "Error sending query to database",
               icon: "error",
@@ -165,7 +165,7 @@ const Chat = () => {
           Swal.fire({
             title: "Error",
             text:
-            // @ts-ignore
+              // @ts-ignore
               response.error?.data.message || "Error sending query to database",
             icon: "error",
           });
@@ -200,6 +200,16 @@ const Chat = () => {
         />
       </div>
       {/* Conversation part */}
+      {id &&
+        !isLoading &&
+        data?.data?.messages.map((message: any) => (
+          <Message
+            key={message?._id}
+            userQuery={message?.query}
+            reply={message?.answer}
+            loading={false}
+          />
+        ))}
       <div className="flex flex-col space-y-5 w-full">
         {/* Chats */}
         {conversation.map((conv, index) => (
@@ -210,17 +220,6 @@ const Chat = () => {
             loading={conv.loading}
           />
         ))}
-        {id &&
-          !isLoading &&
-          data?.data?.messages.map((message: any) => (
-            <Message
-              key={message?._id}
-              userQuery={message?.query}
-              reply={message?.answer}
-              loading={false}
-            />
-          ))}
-
         {/* Input and button for chat */}
         <div className="p-4 w-full">
           <div className="flex items-center gap-3">

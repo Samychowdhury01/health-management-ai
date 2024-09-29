@@ -96,7 +96,19 @@ export const getHealthKeywords = () => {
     "acute",
     "fatigue",
     "pain",
-    "fit"
+    "fit",
+    " Headaches",
+    "Fatigue",
+    "Muscle aches and pains",
+    "Yawning",
+    "Sweating",
+    "Fever",
+    "Headache",
+    "Eye Pain",
+    "Breathing",
+    "Heart rate",
+    "Blood pressure",
+    "Hunger and thirst",
   ];
   return keywords;
 };

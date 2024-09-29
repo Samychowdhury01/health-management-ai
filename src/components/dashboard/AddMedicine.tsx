@@ -8,6 +8,8 @@ import Swal from "sweetalert2";
 import Select from "react-select";
 import { useState } from "react";
 import CloudIcon from "../ui/CloudIcon";
+import { useAddMedicineMutation } from "@/redux/api/medicine/medicineApi";
+import Spinner from "../ui/Spinner";
 
 type TOptions = {
   value: string;
@@ -33,19 +35,55 @@ const AddMedicine = () => {
   ];
   // days array
   const [days, setDays] = useState<string[]>([]);
+  // image upload status
+  const [imageUploadStatus, setImageUploadStatus] = useState(false);
+  // api
+  const [AddMedicine, {isLoading}] = useAddMedicineMutation()
+
   // handle form submission
   const onSubmit = async (data: any) => {
-    console.log(days);
+    let imgUrl = "";
+    const { name, power, time } = data;
+    if (data?.image && data.image[0]) {
+      const formData = new FormData();
+      formData.append("image", data.image[0]);
+      const img_hosting_token = import.meta.env.VITE_Image_Upload_token;
+      const imgBBResponse = await fetch(
+        `https://api.imgbb.com/1/upload?key=${img_hosting_token}`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      if (!imgBBResponse.ok) {
+        throw new Error("Image upload failed");
+      }
+
+      const imgBBData = await imgBBResponse.json();
+      imgUrl = imgBBData.data.url; // Get the image URL from ImgBB
+      setImageUploadStatus(true);
+    }
+    const medicine = {
+      name,
+      power,
+      time,
+      days,
+      imgUrl,
+    };
+    
     try {
       //   const response = await updateProfile(data);
-      const response = await {};
+      const response = await AddMedicine(medicine);
 
       if (response.data) {
         Swal.fire({
           title: "Success",
-          text: "Profile updated successfully",
+          text: "Medicine added successfully",
           icon: "success",
         });
+        setDays([]);
+        reset()
       } else {
         const errorData = getErrorData(response.error);
         Swal.fire({
@@ -81,32 +119,36 @@ const AddMedicine = () => {
       </h1>
       <form onSubmit={handleSubmit(onSubmit)}>
         {/* image */}
-        <div className="flex items-center justify-center w-full mb-5">
-          <label
-            htmlFor="dropzone-file"
-            className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-200 duration-300 transition-all"
-          >
-            <div className="flex flex-col items-center justify-center pt-5 pb-6">
-              <CloudIcon />
-              <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                <span className="font-semibold">Click to upload</span> or drag
-                and drop
-              </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">
-                SVG, PNG, JPG or GIF (MAX. 800x400px)
-              </p>
-            </div>
-            <input
-              id="dropzone-file"
-              type="file"
-              className="hidden"
-              {...register("image", { required: true })}
-            />
-            {errors.image && (
-              <p className="text-red-500 text-sm">Image is required</p>
-            )}
-          </label>
-        </div>
+        {!imageUploadStatus ? (
+          <div className="flex items-center justify-center w-full mb-5">
+            <label
+              htmlFor="dropzone-file"
+              className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-200 duration-300 transition-all"
+            >
+              <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                <CloudIcon />
+                <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                  <span className="font-semibold">Click to upload</span> or drag
+                  and drop
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  SVG, PNG, JPG or GIF (MAX. 800x400px)
+                </p>
+              </div>
+              <input
+                id="dropzone-file"
+                type="file"
+                className="hidden"
+                {...register("image", { required: true })}
+              />
+              {errors.image && (
+                <p className="text-red-500 text-sm">Image is required</p>
+              )}
+            </label>
+          </div>
+        ) : (
+          <p className="text-green-500 text-center mb-5">Image uploaded!</p>
+        )}
         {/* rest inputs */}
         <div className="grid grid-cols-2 gap-2">
           {/* name */}
@@ -137,13 +179,14 @@ const AddMedicine = () => {
           <div className="space-y-1">
             <Label htmlFor="time">Reminder Time</Label>
             <Input
-              placeholder="Medicine taking time (ex. 7:30 pm)"
-              id="time"
-              type="text"
               {...register("time", { required: true })}
-              className="placeholder:text-gray-400"
+              placeholder="Start Time"
+              id="startTime"
+              className="col-span-3"
+              type="time"
             />
           </div>
+
           {/* Days */}
           <div className="space-y-1">
             <Label htmlFor="address">Days</Label>
@@ -159,8 +202,13 @@ const AddMedicine = () => {
           </div>
         </div>
         {/* buttons */}
-        <div className="flex gap-2 mt-5">
+        <div className="mt-5">
+         {
+          isLoading ? 
+          <Spinner/>
+          :
           <Button>Add</Button>
+         }
         </div>
       </form>
     </>

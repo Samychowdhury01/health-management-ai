@@ -4,6 +4,8 @@ import MainLayout from "@/components/layouts/MainLayout";
 import Auth from "@/pages/Auth/Auth";
 import Chat from "@/pages/Chat/Chat";
 import Profile from "@/pages/Dashboard/Profile";
+import UserActivities from "@/pages/Dashboard/UserActivities";
+import UserMedicine from "@/pages/Dashboard/UserMedicine";
 import Home from "@/pages/Home/Home";
 import { createBrowserRouter } from "react-router-dom";
 
@@ -44,6 +46,14 @@ export const router = createBrowserRouter([
       {
         path: "/dashboard/add-medicine",
         element: <AddMedicine/>,
+      },
+      {
+        path: "/dashboard/medicines",
+        element: <UserMedicine/>,
+      },
+      {
+        path: "/dashboard/user-activities",
+        element: <UserActivities/>,
       },
     ],
   },

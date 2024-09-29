@@ -18,6 +18,14 @@ const userApi = baseApi.injectEndpoints({
         };
       },
     }),
+    usersActivities: builder.query({
+      query: () => {
+        return {
+          url: "/users/activities",
+          method: "GET",
+        };
+      },
+    }),
     updateUserProfile: builder.mutation({
       query: (payload) => {
         return {
@@ -33,4 +41,5 @@ export const {
   useGetAllUsersQuery,
   useGetUserProfileQuery,
   useUpdateUserProfileMutation,
+  useUsersActivitiesQuery
 } = userApi;

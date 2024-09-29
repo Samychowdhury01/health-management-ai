@@ -35,7 +35,6 @@ const Profile = () => {
   const [profileStatus, setProfileStatus] = useState<number>(
     data?.data.profileCompleteStatus
   );
-
   const onSubmit = async (data: any) => {
     const updatedProfileInfo = {
       gender,
@@ -85,8 +84,13 @@ const Profile = () => {
     <div>
       {/* profile completion */}
       <div className="mb-5">
-        <p className="text-sm font-semibold text-end">{profileStatus}%</p>
-        <Progress value={profileStatus} className="w-full bg-blue-100" />
+        <p className="text-sm font-semibold text-end">
+          {profileStatus || data?.data.profileCompleteStatus}%
+        </p>
+        <Progress
+          value={profileStatus || data?.data.profileCompleteStatus}
+          className="w-full bg-blue-100"
+        />
       </div>
       {/* profile details */}
       <h1 className="text-center font-semibold text-3xl border-b-2 text-gradient mb-5">
