@@ -7,12 +7,15 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import useDecodedToken from "@/hook/useDecodedToken";
 import { useCookies } from "react-cookie";
+import { useAppSelector } from "@/redux/hook";
+import { Badge } from "./badge";
 
 const NavMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
   const user = useDecodedToken();
   const [cookie, setCookie, removeCookie] = useCookies();
   const navigate = useNavigate();
+  const { notifications } = useAppSelector((state) => state.notifications);
 
   // handle user logout
   const handleLogout = async () => {
@@ -30,6 +33,10 @@ const NavMenu = () => {
       </li>
       <li>
         <ActiveLink to="/chat">Chat</ActiveLink>
+      </li>
+      <li className="flex items-center gap-1">
+        <ActiveLink to="/notification">Notification</ActiveLink>
+        <Badge variant="outline">{notifications.length}</Badge>
       </li>
       <li>
         <ActiveLink to="/dashboard/profile">Dashboard</ActiveLink>

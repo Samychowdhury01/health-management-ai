@@ -190,6 +190,10 @@ const Chat = () => {
     navigate("/chat");
   };
 
+  if (user?.status < 100) {
+    Swal.fire("You have to complete your profile to start chatting!");
+    navigate("/dashboard/profile");
+  }
   return (
     <div className="flex gap-3">
       {/* Side bar */}

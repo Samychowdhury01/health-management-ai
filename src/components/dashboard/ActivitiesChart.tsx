@@ -8,7 +8,7 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 const ActivitiesChart: React.FC = () => {
   const { data: activities } = useUsersActivitiesQuery("");
   const data = {
-    labels: [ "Completed", "Not Completed"],
+    labels: ["Completed", "Not Completed"],
     datasets: [
       {
         label: "users",
@@ -34,9 +34,14 @@ const ActivitiesChart: React.FC = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto">
-      <Doughnut data={data} options={options} />
-    </div>
+    <>
+      <h1 className="text-center font-semibold text-3xl border-b-2 text-gradient mb-5">
+        Users Profile Activities
+      </h1>
+      <div className="max-w-md mx-auto">
+        <Doughnut data={data} options={options} />
+      </div>
+    </>
   );
 };
 

@@ -18,7 +18,7 @@ import { useLoginMutation } from "@/redux/api/auth/authApi";
 import Spinner from "../ui/Spinner";
 import { useState } from "react";
 import { useCookies } from "react-cookie";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { getErrorData } from "@/utils/getErrorData";
 
 const Login = () => {
@@ -41,7 +41,7 @@ const Login = () => {
 
   // cookies for testing
   const [, setCookie] = useCookies(["token"]);
-
+  const location = useLocation();
   // onSubmit handler
   const onSubmit = async (data: any) => {
     setErrorMessage(""); // Clear any previous error messages
@@ -61,7 +61,7 @@ const Login = () => {
           text: response.data.message || "Login successful!",
         });
 
-        navigate("/"); // Redirect to dashboard
+        navigate(location?.state?.from?.pathname || "/");
         setErrorMessage(""); // Clear any error messages
       } else {
         // Use getErrorData to extract detailed error information

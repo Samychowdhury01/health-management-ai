@@ -1,10 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { baseApi } from "./api/api";
-
+import notificationReducer from './features/notificationSlice';
 export const store = configureStore({
   reducer: {
     // Add your reducers here
     [baseApi.reducerPath]: baseApi.reducer,
+    notifications: notificationReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(baseApi.middleware),

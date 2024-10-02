@@ -8,6 +8,9 @@ import UserActivities from "@/pages/Dashboard/UserActivities";
 import UserMedicine from "@/pages/Dashboard/UserMedicine";
 import Home from "@/pages/Home/Home";
 import { createBrowserRouter } from "react-router-dom";
+import PrivateRote from "./PrivateRote";
+import AdminRoute from "./AdminRoute";
+import Notification from "@/pages/Notification/Notification";
 
 export const router = createBrowserRouter([
   {
@@ -23,37 +26,54 @@ export const router = createBrowserRouter([
         element: <Auth />,
       },
       {
+        path: "/notification",
+        element: <Notification />,
+      },
+      {
         path: "/chat",
-        element: <Chat />,
-        
+        element: (
+          <PrivateRote>
+            <Chat />
+          </PrivateRote>
+        ),
       },
       {
         path: "/chat/:id",
-        element: <Chat />,
-        
+        element: (
+          <PrivateRote>
+            <Chat />
+          </PrivateRote>
+        ),
       },
-      
     ],
   },
   {
     path: "/dashboard",
-    element: <DashboardLayout />,
+    element: (
+      <PrivateRote>
+        <DashboardLayout />
+      </PrivateRote>
+    ),
     children: [
       {
         path: "/dashboard/profile",
-        element: <Profile/>,
+        element: <Profile />,
       },
       {
         path: "/dashboard/add-medicine",
-        element: <AddMedicine/>,
+        element: <AddMedicine />,
       },
       {
         path: "/dashboard/medicines",
-        element: <UserMedicine/>,
+        element: <UserMedicine />,
       },
       {
         path: "/dashboard/user-activities",
-        element: <UserActivities/>,
+        element: (
+          <AdminRoute>
+            <UserActivities />
+          </AdminRoute>
+        ),
       },
     ],
   },
