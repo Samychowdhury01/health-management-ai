@@ -32,15 +32,18 @@ const Profile = () => {
   const [gender, setGender] = useState(data?.data.gender || "");
   const [isPregnant, setIsPregnant] = useState(data?.data.isPregnant || "");
   const [isDiabetes, setIsDiabetes] = useState(data?.data.isDiabetes || "");
+  const [bloodGroup, setBloodGroup] = useState(data?.data.bloodGroup || "");
   const [profileStatus, setProfileStatus] = useState<number>(
     data?.data.profileCompleteStatus
   );
+
   const onSubmit = async (data: any) => {
     const updatedProfileInfo = {
       gender,
 
       isDiabetes: isDiabetes.toLowerCase() === "yes",
       isPregnant: isPregnant.toLowerCase() === "yes",
+      bloodGroup,
       ...data,
     };
 
@@ -141,7 +144,7 @@ const Profile = () => {
               <Input
                 defaultValue={data?.data.age}
                 readOnly={toggle}
-                placeholder="Your Phone No."
+                placeholder="Your Age"
                 id="age"
                 type="number"
                 {...register("age", { required: true })}
@@ -149,21 +152,36 @@ const Profile = () => {
             </div>
             {/* blood */}
             <div className="space-y-1">
-              <Label htmlFor="blood">
-                Blood Group
-                <span className="text-gray-600 text-sm">
-                  (try to write in this pattern: A+, A-, B+, B-, AB+, AB-, O+,
-                  O-)
-                </span>
-              </Label>
-              <Input
-                defaultValue={data?.data.bloodGroup}
-                readOnly={toggle}
-                placeholder="Your Blood Group"
-                id="blood"
-                type="text"
-                {...register("bloodGroup", { required: true })}
-              />
+              <Label htmlFor="blood">Blood Group</Label>
+              {toggle ? (
+                <Input
+                  defaultValue={data?.data.bloodGroup}
+                  readOnly={toggle}
+                  placeholder="Your Blood Group"
+                  id="blood"
+                  type="text"
+                  {...register("bloodGroup", { required: true })}
+                />
+              ) : (
+                <Select onValueChange={(value) => setBloodGroup(value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Blood Group" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Blood Group</SelectLabel>
+                      <SelectItem value="A+">A+</SelectItem>
+                      <SelectItem value="A-">A-</SelectItem>
+                      <SelectItem value="B+"> B+</SelectItem>
+                      <SelectItem value="B-">B-</SelectItem>
+                      <SelectItem value="AB+">AB+</SelectItem>
+                      <SelectItem value="AB-">B-</SelectItem>
+                      <SelectItem value="O+">O+</SelectItem>
+                      <SelectItem value="O-">O-</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              )}
             </div>
             {/* diabetic */}
             <div className="space-y-1">

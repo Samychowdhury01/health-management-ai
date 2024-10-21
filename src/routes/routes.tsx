@@ -11,6 +11,7 @@ import { createBrowserRouter } from "react-router-dom";
 import PrivateRote from "./PrivateRote";
 import AdminRoute from "./AdminRoute";
 import Notification from "@/pages/Notification/Notification";
+import AllUsers from "@/pages/Dashboard/AllUsers";
 
 export const router = createBrowserRouter([
   {
@@ -72,6 +73,14 @@ export const router = createBrowserRouter([
         element: (
           <AdminRoute>
             <UserActivities />
+          </AdminRoute>
+        ),
+      },
+      {
+        path: "/dashboard/users",
+        element: (
+          <AdminRoute>
+            <AllUsers />
           </AdminRoute>
         ),
       },

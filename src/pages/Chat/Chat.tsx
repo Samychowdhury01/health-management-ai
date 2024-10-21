@@ -203,40 +203,43 @@ const Chat = () => {
           activeConversationId={conversationId}
         />
       </div>
-      {/* Conversation part */}
-      {id &&
-        !isLoading &&
-        data?.data?.messages.map((message: any) => (
-          <Message
-            key={message?._id}
-            userQuery={message?.query}
-            reply={message?.answer}
-            loading={false}
-          />
-        ))}
-      <div className="flex flex-col space-y-5 w-full">
-        {/* Chats */}
-        {conversation.map((conv, index) => (
-          <Message
-            key={index}
-            userQuery={conv.userQuery}
-            reply={conv.reply}
-            loading={conv.loading}
-          />
-        ))}
-        {/* Input and button for chat */}
-        <div className="p-4 w-full">
-          <div className="flex items-center gap-3">
-            <Input
-              required
-              value={query} // Bind input value to the state
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Ask your assistant"
-              className="shadow-xl"
+      {/* input button conversation part */}
+      <div className=" w-full">
+        {/* Conversation part */}
+        {id &&
+          !isLoading &&
+          data?.data?.messages.map((message: any) => (
+            <Message
+              key={message?._id}
+              userQuery={message?.query}
+              reply={message?.answer}
+              loading={false}
             />
-            <Button onClick={handleSend} variant="default">
-              <FaLocationArrow size={20} />
-            </Button>
+          ))}
+        <div className="flex flex-col space-y-5 w-full">
+          {/* Chats */}
+          {conversation.map((conv, index) => (
+            <Message
+              key={index}
+              userQuery={conv.userQuery}
+              reply={conv.reply}
+              loading={conv.loading}
+            />
+          ))}
+          {/* Input and button for chat */}
+          <div className="p-4">
+            <div className="flex items-center gap-3">
+              <Input
+                required
+                value={query} // Bind input value to the state
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Ask your assistant"
+                className="shadow-xl"
+              />
+              <Button onClick={handleSend} variant="default">
+                <FaLocationArrow size={20} />
+              </Button>
+            </div>
           </div>
         </div>
       </div>

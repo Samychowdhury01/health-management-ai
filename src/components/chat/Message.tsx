@@ -59,7 +59,7 @@ const Message = ({
         </div>
       ) : (
         reply && (
-          <div className="bg-slate-100 rounded-md p-2">
+          <div className="bg-slate-100 rounded-md p-5">
             <ReactMarkdown>{reply}</ReactMarkdown>
           </div>
         )

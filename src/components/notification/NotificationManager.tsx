@@ -4,13 +4,19 @@ import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import notificationSound from "@/assets/notification.mp3";
 import { useAppDispatch, useAppSelector } from "@/redux/hook";
-import { addNotification, dismissNotification, stopAudio } from "@/redux/features/notificationSlice";
+import {
+  addNotification,
+  dismissNotification,
+  stopAudio,
+} from "@/redux/features/notificationSlice";
 import useDecodedToken from "@/hook/useDecodedToken";
 
 const NotificationManager: React.FC = () => {
   const user: any = useDecodedToken();
   const dispatch = useAppDispatch();
-  const { audioPlaying, notifications } = useAppSelector((state) => state.notifications);
+  const { audioPlaying, notifications } = useAppSelector(
+    (state) => state.notifications
+  );
   const [audio] = useState(new Audio(notificationSound));
 
   useEffect(() => {
@@ -18,11 +24,12 @@ const NotificationManager: React.FC = () => {
   }, [audio]);
 
   useEffect(() => {
-    const socket = io("http://localhost:5000");
+    const socket = io(import.meta.env.VITE_SOCKET_API);
 
     socket.on("connect", () => {
       console.log("Socket connected:", socket.id);
-      const userId = user?.userId; // Replace with actual user ID logic
+      socket.id = user?.userId;
+      const userId = user?.userId;
       socket.emit("register", userId);
     });
 
@@ -42,7 +49,9 @@ const NotificationManager: React.FC = () => {
   useEffect(() => {
     if (audioPlaying) {
       audio.loop = true; // Set audio to loop
-      audio.play().catch((error) => console.error("Error playing audio:", error));
+      audio
+        .play()
+        .catch((error) => console.error("Error playing audio:", error));
     } else {
       audio.pause();
       audio.currentTime = 0;

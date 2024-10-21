@@ -12,7 +12,10 @@ const ActivitiesChart: React.FC = () => {
     datasets: [
       {
         label: "users",
-        data: [activities?.data, 100 - activities?.data],
+        data: [
+          activities?.data?.totalPercentageOfCompleted,
+          100 - activities?.data,
+        ],
         backgroundColor: ["rgba(54, 162, 235, 0.6)", "rgba(255, 99, 132, 0.6)"],
         borderColor: ["rgba(54, 162, 235, 1)", "rgba(255, 99, 132, 1)"],
         borderWidth: 1,

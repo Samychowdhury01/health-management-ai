@@ -1,8 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import useDecodedToken from "@/hook/useDecodedToken";
 import SideActiveLink from "./SideActiveLink";
 
 const SideNav = () => {
-  const user: any = {};
+  const user: any = useDecodedToken();
+
   const userNavItem = (
     <>
       <li>
@@ -27,7 +29,9 @@ const SideNav = () => {
         <SideActiveLink to="/dashboard/users">Users</SideActiveLink>
       </li>
       <li>
-        <SideActiveLink to="/dashboard/rentals">User Activities</SideActiveLink>
+        <SideActiveLink to="/dashboard/user-activities">
+          User Activities
+        </SideActiveLink>
       </li>
     </>
   );
@@ -35,7 +39,7 @@ const SideNav = () => {
   return (
     <div className="p-5 rounded-md h-full">
       <ul className="space-y-5">
-        {user.role !== "user" ? userNavItem : adminNavItem}
+        {user.role === "user" ? userNavItem : adminNavItem}
       </ul>
     </div>
   );

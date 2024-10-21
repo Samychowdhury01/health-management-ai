@@ -35,11 +35,20 @@ const userApi = baseApi.injectEndpoints({
         };
       },
     }),
+    promoteUser: builder.mutation({
+      query: (userId) => {
+        return {
+          url: `/users/${userId}`,
+          method: "PUT",
+        };
+      },
+    }),
   }),
 });
 export const {
   useGetAllUsersQuery,
   useGetUserProfileQuery,
   useUpdateUserProfileMutation,
-  useUsersActivitiesQuery
+  useUsersActivitiesQuery,
+  usePromoteUserMutation
 } = userApi;

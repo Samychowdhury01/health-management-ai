@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import ActiveLink from "./ActiveLink";
@@ -12,7 +13,8 @@ import { Badge } from "./badge";
 
 const NavMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const user = useDecodedToken();
+  const user: any = useDecodedToken();
+  // @ts-ignore
   const [cookie, setCookie, removeCookie] = useCookies();
   const navigate = useNavigate();
   const { notifications } = useAppSelector((state) => state.notifications);
@@ -31,16 +33,26 @@ const NavMenu = () => {
       <li>
         <ActiveLink to="/">Home</ActiveLink>
       </li>
-      <li>
-        <ActiveLink to="/chat">Chat</ActiveLink>
-      </li>
-      <li className="flex items-center gap-1">
-        <ActiveLink to="/notification">Notification</ActiveLink>
-        <Badge variant="outline">{notifications.length}</Badge>
-      </li>
-      <li>
-        <ActiveLink to="/dashboard/profile">Dashboard</ActiveLink>
-      </li>
+
+      {user?.role && (
+        <>
+          {user.role === "user" && (
+            <>
+              <li>
+                <ActiveLink to="/chat">Chat</ActiveLink>
+              </li>
+              <li className="flex items-center gap-1">
+                <ActiveLink to="/notification">Notification</ActiveLink>
+                <Badge variant="outline">{notifications.length}</Badge>
+              </li>
+            </>
+          )}
+          <li>
+            <ActiveLink to="/dashboard/profile">Dashboard</ActiveLink>
+          </li>
+        </>
+      )}
+
       <li>
         {Object.entries(user).length ? (
           <Button onClick={handleLogout} variant="outline">

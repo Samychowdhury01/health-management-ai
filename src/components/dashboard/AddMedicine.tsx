@@ -39,7 +39,7 @@ const AddMedicine = () => {
   // image upload status
   const [imageUploadStatus, setImageUploadStatus] = useState(false);
   // api
-  const [AddMedicine, {isLoading}] = useAddMedicineMutation()
+  const [AddMedicine, { isLoading }] = useAddMedicineMutation();
 
   // handle form submission
   const onSubmit = async (data: any) => {
@@ -72,7 +72,7 @@ const AddMedicine = () => {
       days,
       imgUrl,
     };
-    
+
     try {
       //   const response = await updateProfile(data);
       const response = await AddMedicine(medicine);
@@ -84,7 +84,7 @@ const AddMedicine = () => {
           icon: "success",
         });
         setDays([]);
-        reset()
+        reset();
       } else {
         const errorData = getErrorData(response.error);
         Swal.fire({
@@ -109,8 +109,9 @@ const AddMedicine = () => {
   };
 
   // handle multi select days
-  const handleDaysChange = (selectedDays: TOptions[]) => {
-    const medicineTakingDays = selectedDays?.map((day) => day?.value) || [];
+  const handleDaysChange = (selectedDays: any) => {
+    const medicineTakingDays =
+      selectedDays?.map((day: any) => day?.value) || [];
     setDays(medicineTakingDays);
   };
   return (
@@ -204,12 +205,7 @@ const AddMedicine = () => {
         </div>
         {/* buttons */}
         <div className="mt-5">
-         {
-          isLoading ? 
-          <Spinner/>
-          :
-          <Button>Add</Button>
-         }
+          {isLoading ? <Spinner /> : <Button>Add</Button>}
         </div>
       </form>
     </>
