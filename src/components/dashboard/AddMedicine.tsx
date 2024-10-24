@@ -91,8 +91,7 @@ const AddMedicine = () => {
           icon: "error",
           title: "Oops...",
           text:
-            errorData?.message ||
-            "An error occurred while updating the profile",
+            errorData?.message || "An error occurred while adding the medicine",
         });
       }
     } catch (error) {

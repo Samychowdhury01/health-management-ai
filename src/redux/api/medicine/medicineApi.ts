@@ -30,4 +30,4 @@ const medicineApi = baseApi.injectEndpoints({
   }),
 });
 
-export const { useAddMedicineMutation, useGetUserMedicinesQuery } = medicineApi;
+export const { useAddMedicineMutation, useGetUserMedicinesQuery , useRemoveMedicineMutation} = medicineApi;

@@ -7,10 +7,46 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useGetUserMedicinesQuery } from "@/redux/api/medicine/medicineApi";
+import {
+  useGetUserMedicinesQuery,
+  useRemoveMedicineMutation,
+} from "@/redux/api/medicine/medicineApi";
 import { convertHourTime } from "@/utils/convertHourTime";
+import { Button } from "../ui/button";
+import Swal from "sweetalert2";
 const UserMedicineList = () => {
-  const { data, isLoading } = useGetUserMedicinesQuery("");
+  const { data, isLoading, refetch } = useGetUserMedicinesQuery("");
+  const [deleteMedicine] = useRemoveMedicineMutation();
+
+  const handleDeleteMedicine = async (id: string) => {
+    const response = await deleteMedicine({ id });
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        if (response.data) {
+          Swal.fire({
+            title: "Deleted!",
+            text: "Your medicine has been deleted.",
+            icon: "success",
+          });
+          refetch();
+        } else {
+          Swal.fire({
+            title: "Error",
+            text: "Failed to delete medicine",
+            icon: "error",
+          });
+        }
+      }
+    });
+  };
   return (
     <>
       <h1 className="text-center font-semibold text-3xl border-b-2 text-gradient mb-5">
@@ -24,6 +60,7 @@ const UserMedicineList = () => {
             <TableHead>Power</TableHead>
             <TableHead className="text-center">Taking Time</TableHead>
             <TableHead className="text-center">Days</TableHead>
+            <TableHead className="text-center">Action</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -55,6 +92,15 @@ const UserMedicineList = () => {
                       </p>
                     ))}
                   </div>
+                </TableCell>
+                <TableCell className="text-center">
+                  <Button
+                    onClick={() => handleDeleteMedicine(medicine._id)}
+                    size="sm"
+                    className="bg-red-500 hover:border-red-500 hover:text-red-500"
+                  >
+                    Delete
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}
