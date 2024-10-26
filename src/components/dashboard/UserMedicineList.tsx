@@ -19,7 +19,6 @@ const UserMedicineList = () => {
   const [deleteMedicine] = useRemoveMedicineMutation();
 
   const handleDeleteMedicine = async (id: string) => {
-    const response = await deleteMedicine({ id });
     Swal.fire({
       title: "Are you sure?",
       text: "You won't be able to revert this!",
@@ -30,6 +29,7 @@ const UserMedicineList = () => {
       confirmButtonText: "Yes, delete it!",
     }).then(async (result) => {
       if (result.isConfirmed) {
+        const response = await deleteMedicine({ id });
         if (response.data) {
           Swal.fire({
             title: "Deleted!",

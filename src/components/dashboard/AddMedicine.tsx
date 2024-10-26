@@ -36,10 +36,19 @@ const AddMedicine = () => {
   ];
   // days array
   const [days, setDays] = useState<string[]>([]);
-  // image upload status
-  const [imageUploadStatus, setImageUploadStatus] = useState(false);
+
+  const [imagePreview, setImagePreview] = useState<string | null>(null); // Store image preview URL
+ 
   // api
   const [AddMedicine, { isLoading }] = useAddMedicineMutation();
+
+  // handle image selection and preview
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setImagePreview(URL.createObjectURL(file)); // Generate preview URL
+    }
+  };
 
   // handle form submission
   const onSubmit = async (data: any) => {
@@ -63,7 +72,6 @@ const AddMedicine = () => {
 
       const imgBBData = await imgBBResponse.json();
       imgUrl = imgBBData.data.url; // Get the image URL from ImgBB
-      setImageUploadStatus(true);
     }
     const medicine = {
       name,
@@ -113,19 +121,23 @@ const AddMedicine = () => {
       selectedDays?.map((day: any) => day?.value) || [];
     setDays(medicineTakingDays);
   };
+
   return (
     <>
       <h1 className="text-center font-semibold text-3xl border-b-2 text-gradient mb-5">
         Add Medicine
       </h1>
       <form onSubmit={handleSubmit(onSubmit)}>
-        {/* image */}
-        {!imageUploadStatus ? (
-          <div className="flex items-center justify-center w-full mb-5">
-            <label
-              htmlFor="dropzone-file"
-              className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-200 duration-300 transition-all"
-            >
+
+        {/* Image Upload */}
+        <div className="flex items-center justify-center w-full mb-5">
+          <label
+            htmlFor="dropzone-file"
+            className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-200 duration-300 transition-all"
+          >
+            {imagePreview ? (
+              <img src={imagePreview} alt="Selected" className="h-32 mb-3" />
+            ) : (
               <div className="flex flex-col items-center justify-center pt-5 pb-6">
                 <CloudIcon />
                 <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
@@ -136,20 +148,20 @@ const AddMedicine = () => {
                   SVG, PNG, JPG or GIF (MAX. 800x400px)
                 </p>
               </div>
-              <input
-                id="dropzone-file"
-                type="file"
-                className="hidden"
-                {...register("image", { required: true })}
-              />
-              {errors.image && (
-                <p className="text-red-500 text-sm">Image is required</p>
-              )}
-            </label>
-          </div>
-        ) : (
-          <p className="text-green-500 text-center mb-5">Image uploaded!</p>
-        )}
+            )}
+            <input
+              id="dropzone-file"
+              type="file"
+              className="hidden"
+              {...register("image", { required: true })}
+              onChange={handleImageChange} // Call the handler for image change
+            />
+            {errors.image && (
+              <p className="text-red-500 text-sm">Image is required</p>
+            )}
+          </label>
+        </div>
+
         {/* rest inputs */}
         <div className="grid grid-cols-2 gap-2">
           {/* name */}

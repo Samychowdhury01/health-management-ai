@@ -55,13 +55,15 @@ const NavMenu = () => {
 
       <li>
         {Object.entries(user).length ? (
-          <Button onClick={handleLogout} variant="outline">
-            <NavLink to="/auth">Logout</NavLink>
-          </Button>
+          <NavLink to="/auth">
+            <Button onClick={handleLogout} variant="outline">
+              Logout
+            </Button>
+          </NavLink>
         ) : (
-          <Button variant="outline">
-            <NavLink to="/auth">Login</NavLink>
-          </Button>
+          <NavLink to="/auth">
+            <Button variant="outline">Login</Button>
+          </NavLink>
         )}
       </li>
     </>

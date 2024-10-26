@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
-import notificationSound from "@/assets/notification.mp3";
+import notificationSound from "/notification.mp3";
 import { useAppDispatch, useAppSelector } from "@/redux/hook";
 import {
   addNotification,
@@ -28,7 +28,7 @@ const NotificationManager: React.FC = () => {
 
     socket.on("connect", () => {
       console.log("Socket connected:", socket.id);
-      socket.id = user?.userId;
+      // socket.id = user?.userId;
       const userId = user?.userId;
       socket.emit("register", userId);
     });

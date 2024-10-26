@@ -12,7 +12,7 @@ const Notification: React.FC = () => {
   };
 
   return (
-    <div className="p-4">
+    <div className="p-4 h-screen">
       <h1 className="text-2xl font-bold mb-4">Notifications</h1>
       <ul className="list-disc pl-5">
         {notifications.length === 0 ? (

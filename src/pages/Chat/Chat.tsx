@@ -191,60 +191,65 @@ const Chat = () => {
   };
 
   if (user?.status < 100) {
+    console.log(user?.status);
     Swal.fire("You have to complete your profile to start chatting!");
     navigate("/dashboard/profile");
   }
   return (
-    <div className="flex gap-3">
+    <div className="flex gap-3 relative">
       {/* Side bar */}
-      <div className="w-1/4 bg-blue-100 p-4">
+      <div className="w-1/4 bg-blue-100 p-2 sticky top-0 h-screen">
         <ChatSideBar
           handleNewConversation={handleNewConversation}
           activeConversationId={conversationId}
         />
       </div>
+  
       {/* input button conversation part */}
-      <div className=" w-full">
+      <div className="w-full flex flex-col relative">
         {/* Conversation part */}
-        {id &&
-          !isLoading &&
-          data?.data?.messages.map((message: any) => (
-            <Message
-              key={message?._id}
-              userQuery={message?.query}
-              reply={message?.answer}
-              loading={false}
-            />
-          ))}
-        <div className="flex flex-col space-y-5 w-full">
-          {/* Chats */}
-          {conversation.map((conv, index) => (
-            <Message
-              key={index}
-              userQuery={conv.userQuery}
-              reply={conv.reply}
-              loading={conv.loading}
-            />
-          ))}
-          {/* Input and button for chat */}
-          <div className="p-4">
-            <div className="flex items-center gap-3">
-              <Input
-                required
-                value={query} // Bind input value to the state
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Ask your assistant"
-                className="shadow-xl"
+        <div className="overflow-y-auto flex-1 pb-20">
+          {id &&
+            !isLoading &&
+            data?.data?.messages.map((message: any) => (
+              <Message
+                key={message?._id}
+                userQuery={message?.query}
+                reply={message?.answer}
+                loading={false}
               />
-              <Button onClick={handleSend} variant="default">
-                <FaLocationArrow size={20} />
-              </Button>
-            </div>
+            ))}
+          <div className="flex flex-col space-y-5 w-full">
+            {conversation.map((conv, index) => (
+              <Message
+                key={index}
+                userQuery={conv.userQuery}
+                reply={conv.reply}
+                loading={conv.loading}
+              />
+            ))}
+          </div>
+        </div>
+  
+        {/* Sticky Input and Button */}
+        <div className="sticky bottom-0 w-full bg-white p-4">
+          <div className="flex items-center gap-3">
+            <Input
+              required
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Ask your assistant"
+              className="shadow-xl w-full"
+            />
+            <Button onClick={handleSend} variant="default">
+              <FaLocationArrow size={20} />
+            </Button>
           </div>
         </div>
       </div>
     </div>
   );
+  
 };
 
 export default Chat;
