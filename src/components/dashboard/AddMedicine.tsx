@@ -38,6 +38,7 @@ const AddMedicine = () => {
   const [days, setDays] = useState<string[]>([]);
 
   const [imagePreview, setImagePreview] = useState<string | null>(null); // Store image preview URL
+  const [selectedImage, setSelectedImage] = useState<string | null>(null); // Store image preview URL
  
   // api
   const [AddMedicine, { isLoading }] = useAddMedicineMutation();
@@ -47,16 +48,18 @@ const AddMedicine = () => {
     const file = event.target.files?.[0];
     if (file) {
       setImagePreview(URL.createObjectURL(file)); // Generate preview URL
+      setSelectedImage(file)
     }
   };
 
   // handle form submission
   const onSubmit = async (data: any) => {
     let imgUrl = "";
+  
     const { name, power, time } = data;
-    if (data?.image && data.image[0]) {
+    if (selectedImage) {
       const formData = new FormData();
-      formData.append("image", data.image[0]);
+      formData.append("image", selectedImage);
       const img_hosting_token = import.meta.env.VITE_Image_Upload_token;
       const imgBBResponse = await fetch(
         `https://api.imgbb.com/1/upload?key=${img_hosting_token}`,
@@ -65,34 +68,36 @@ const AddMedicine = () => {
           body: formData,
         }
       );
-
       if (!imgBBResponse.ok) {
         throw new Error("Image upload failed");
       }
 
       const imgBBData = await imgBBResponse.json();
+
       imgUrl = imgBBData.data.url; // Get the image URL from ImgBB
     }
     const medicine = {
       name,
-      power,
+      power: `${power}mg`,
       time,
       days,
       imgUrl,
     };
-
     try {
       //   const response = await updateProfile(data);
       const response = await AddMedicine(medicine);
-
       if (response.data) {
         Swal.fire({
           title: "Success",
           text: "Medicine added successfully",
           icon: "success",
         });
+        // clearing the form
         setDays([]);
         reset();
+        setSelectedImage(null)
+        setImagePreview(null)
+
       } else {
         const errorData = getErrorData(response.error);
         Swal.fire({
@@ -153,7 +158,7 @@ const AddMedicine = () => {
               id="dropzone-file"
               type="file"
               className="hidden"
-              {...register("image", { required: true })}
+              required
               onChange={handleImageChange} // Call the handler for image change
             />
             {errors.image && (
@@ -180,13 +185,16 @@ const AddMedicine = () => {
             <Label htmlFor="power">
               Power/Mg <span className="text-gray-400">(ex. 50mg)</span>
             </Label>
-            <Input
+         <div className="flex items-center gap-2">
+         <Input
               className="placeholder:text-gray-400"
               placeholder="Medicine power (20mg)"
               id="power"
-              type="text"
+              type="number"
               {...register("power", { required: true })}
             />
+            <p>Mg</p>
+         </div>
           </div>
           {/* Reminder Time */}
           <div className="space-y-1">
