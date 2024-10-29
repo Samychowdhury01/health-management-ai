@@ -229,13 +229,21 @@ const PatientReportComponent = () => {
             </div>
             {/* Doctor Advise */}
             <div className="space-y-1">
-              <Label htmlFor="advise">Doctor Advise</Label>
+              <Label htmlFor="advise">Doctor Advise(Reports)</Label>
               <div className="flex items-center gap-2">
-                <Input
+                {/* <Input
                   className="placeholder:text-gray-400"
                   placeholder="Doctor Advise"
                   id="advise"
                   type="number"
+                  {...register("advise", { required: true })}
+                /> */}
+                <Input
+                  className="placeholder:text-gray-400"
+                  placeholder="Doctor Advise"
+                  id="advise"
+                  type="file"
+                   accept="application/pdf"
                   {...register("advise", { required: true })}
                 />
               </div>
