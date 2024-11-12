@@ -1,24 +1,24 @@
-import { Button } from "@/components/ui/button";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import img from "@/assets/med.png";
+import { stringToTime } from "@/utils/stringToTime";
 
-const ReportDetailsModal = ({ id }: { id: string }) => {
+const ReportDetailsModal = ({ report }: any) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <p className="p-2 shadow-sm rounded-md cursor-pointer">Report Title</p>
+        <p className="p-2 shadow-sm rounded-md cursor-pointer">
+          {stringToTime(report?.appointment)}
+        </p>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Your previous medical History</DialogTitle>
           {/* <DialogDescription>
@@ -31,14 +31,18 @@ const ReportDetailsModal = ({ id }: { id: string }) => {
             <Label htmlFor="name" className="text-right">
               Prescription Image
             </Label>
-            <div className="w-[200px] mx-auto">
-              <img src={img} alt="" />
+            <div className="w-[200px] h-[200px] mx-auto">
+              <img
+                src={report?.prescriptionImg}
+                alt=""
+                className="w-full h-full object-fill"
+              />
             </div>
           </div>
           {/* doctor name */}
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="name" className="text-right">
-              Doctor Name
+              {report?.doctorName}
             </Label>
             <Input
               id="name"
@@ -50,7 +54,7 @@ const ReportDetailsModal = ({ id }: { id: string }) => {
           {/* doctor number */}
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="doctorNumber" className="text-right">
-              Doctor Number
+              {report?.doctorNumber}
             </Label>
             <Input
               id="doctorNumber"
@@ -62,7 +66,7 @@ const ReportDetailsModal = ({ id }: { id: string }) => {
           {/* symptom */}
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="symptom" className="text-right">
-              Patient Symptom
+              {report?.symptom}
             </Label>
             <Input
               id="symptom"
@@ -74,7 +78,7 @@ const ReportDetailsModal = ({ id }: { id: string }) => {
           {/* appointment date */}
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="date" className="text-right">
-              Appointment Date
+              {stringToTime(report?.appointment)}
             </Label>
             <Input
               id="date"
@@ -84,17 +88,19 @@ const ReportDetailsModal = ({ id }: { id: string }) => {
             />
           </div>
           {/* Doctor Advise */}
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="advise" className="text-right">
-              Doctor Advise
+          {/* prescription image */}
+          <div className="flex flex-col items-start gap-4">
+            <Label htmlFor="name" className="text-right">
+              Report Image
             </Label>
-            <Input
-              id="advise"
-              defaultValue="take rest"
-              className="col-span-3"
-            />
+            <div className="w-[200px] h-[200px] mx-auto">
+              <img
+                src={report?.prescriptionImg}
+                alt=""
+                className="w-full h-full object-fill"
+              />
+            </div>
           </div>
-        
         </div>
         {/* <DialogFooter>
           <Button type="submit">Save changes</Button>
